@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +12,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Tooltip,
 } from '@material-ui/core';
 
 import { mainCriteriaNamesObj } from 'src/utils/constants';
@@ -268,9 +270,18 @@ function VideoCard({
               {video.publication_date}
             </span>
           )}
-          {video.uploader && (
-            <span className={classes.channel}>{video.uploader}</span>
-          )}
+          <Tooltip title="Filter by channel" placement="bottom">
+            <div>
+              {video.uploader && (
+                <Link
+                  to={`/recommendations?uploader=${video.uploader}`}
+                  className={classes.channel}
+                >
+                  {video.uploader}
+                </Link>
+              )}
+            </div>
+          </Tooltip>
         </div>
         {!compact && (
           <Box
