@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
 import clsx from 'clsx';
-
+import { useTranslation, Trans } from 'react-i18next';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Typography,
@@ -13,7 +13,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-import { mainCriteriaNamesObj } from 'src/utils/constants';
+import { getCriteriaName } from 'src/utils/constants';
 import { ActionList, VideoObject } from 'src/utils/types';
 import { useVideoMetadata } from './VideoApi';
 import {
@@ -185,6 +185,7 @@ function VideoCard({
   settings?: ActionList;
   compact?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
   const classes = useStyles();
   const videoId = video.video_id;
@@ -220,6 +221,9 @@ function VideoCard({
       }
     });
   }
+
+  const nbRatings = video.rating_n_ratings;
+  const nbContributors = video.rating_n_contributors;
 
   return (
     <Grid container spacing={1} className={classes.main}>
@@ -263,7 +267,10 @@ function VideoCard({
         <div className={classes.youtube_complements}>
           {video.views && (
             <span className={classes.youtube_complements_p}>
-              {video.views.toLocaleString('en-US')} views
+              <Trans t={t} i18nKey="video.nbViews">
+                {{ nbViews: video.views.toLocaleString(i18n.resolvedLanguage) }}{' '}
+                views
+              </Trans>
             </span>
           )}
           {video.publication_date && (
@@ -301,13 +308,25 @@ function VideoCard({
               </Box>
             )}
 
-            {!!video.rating_n_ratings && video.rating_n_ratings > 0 && (
+            {nbRatings != null && nbRatings > 0 && (
               <Box data-testid="video-card-ratings">
                 <span className={classes.ratings}>
-                  {video.rating_n_ratings} comparisons by{' '}
+                  <Trans
+                    t={t}
+                    i18nKey="video.nbComparisonsBy"
+                    count={nbRatings}
+                  >
+                    {{ count: nbRatings }} comparisons by
+                  </Trans>
                 </span>
                 <span className={classes.contributors}>
-                  {video.rating_n_contributors} contributors
+                  <Trans
+                    t={t}
+                    i18nKey="video.nbContributors"
+                    count={nbContributors}
+                  >
+                    {{ count: nbContributors }} contributors
+                  </Trans>
                 </span>
               </Box>
             )}
@@ -319,17 +338,17 @@ function VideoCard({
                 alignItems="center"
                 className={classes.rated}
               >
-                <span>Rated high:</span>
+                <span>{t('video.criteriaRatedHigh')}</span>
                 <img
                   src={`/svg/${max_criteria}.svg`}
                   alt={max_criteria}
-                  title={mainCriteriaNamesObj[max_criteria]}
+                  title={getCriteriaName(t, max_criteria)}
                 />
-                <span>Rated low:</span>
+                <span>{t('video.criteriaRatedLow')}</span>
                 <img
                   src={`/svg/${min_criteria}.svg`}
                   alt={min_criteria}
-                  title={mainCriteriaNamesObj[min_criteria]}
+                  title={getCriteriaName(t, min_criteria)}
                 />
               </Box>
             )}
@@ -354,7 +373,7 @@ function VideoCard({
             <Box flexGrow={1} />
             <IconButton
               size="small"
-              aria-label="Show settings related to this video"
+              aria-label={t('video.labelShowSettings')}
               onClick={() => setSettingsVisible(!settingsVisible)}
             >
               {settingsVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}

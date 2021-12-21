@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, TextField, Button } from '@mui/material';
 import Alert from 'src/components/Alert';
 import { ApiError } from 'src/services/openapi/core/ApiError';
@@ -12,6 +13,7 @@ const RateLaterAddForm = ({ addVideo }: FormProps) => {
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [hasSucceeded, setHasSucceeded] = useState(false);
   const [formVideo, setFormVideo] = useState('');
+  const { t } = useTranslation();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -42,7 +44,7 @@ const RateLaterAddForm = ({ addVideo }: FormProps) => {
             autoFocus
             required
             fullWidth
-            placeholder="Video id or URL"
+            placeholder={t('ratelater.videoIdOrURL')}
             onChange={(e) => setFormVideo(e.target.value)}
             value={formVideo}
             variant="standard"
@@ -56,17 +58,19 @@ const RateLaterAddForm = ({ addVideo }: FormProps) => {
             variant="contained"
             color="primary"
           >
-            Add to my rate later list
+            {t('ratelater.addToMyRateLaterList')}
           </Button>
         </Grid>
       </Grid>
 
-      {hasSucceeded && <Alert>✅ Video added to your Rate Later list!</Alert>}
+      {hasSucceeded && <Alert>✅ {t('ratelater.videoAdded')}</Alert>}
       {apiError && apiError?.status === 409 && (
-        <Alert>⚠️ The video is already in your Rate Later list.</Alert>
+        <Alert>⚠️ {t('ratelater.videoAlreadyInList')}</Alert>
       )}
       {apiError && apiError?.status !== 409 && (
-        <Alert>❌ An error has occured. {apiError.statusText}</Alert>
+        <Alert>
+          ❌ {t('errorOccurred')} {apiError.statusText}
+        </Alert>
       )}
     </form>
   );

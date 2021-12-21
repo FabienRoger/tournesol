@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-
+import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-
 import { useSnackbar } from 'notistack';
 
 import {
@@ -14,8 +13,8 @@ import {
 import { AccountsService } from 'src/services/openapi';
 
 const PasswordForm = () => {
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-
   const [oldPassword, setOldPassword] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -46,7 +45,7 @@ const PasswordForm = () => {
           contactAdministrator(
             enqueueSnackbar,
             'error',
-            'Sorry, an error has occurred, cannot update password.'
+            t('settings.errorOccurredDuringPasswordUpdate')
           );
         }
       });
@@ -56,7 +55,10 @@ const PasswordForm = () => {
       if ('detail' in response) {
         showSuccessAlert(enqueueSnackbar, response['detail']);
       } else {
-        showSuccessAlert(enqueueSnackbar, 'Password changed successfully');
+        showSuccessAlert(
+          enqueueSnackbar,
+          t('settings.passwordChangedSuccessfully')
+        );
       }
 
       setOldPassword('');
@@ -74,7 +76,7 @@ const PasswordForm = () => {
           <TextField
             required
             fullWidth
-            label="Old password"
+            label={t('settings.oldPassword')}
             name="old_password"
             color="secondary"
             size="small"
@@ -89,7 +91,7 @@ const PasswordForm = () => {
           <TextField
             required
             fullWidth
-            label="New password"
+            label={t('settings.newPassword')}
             name="password"
             color="secondary"
             size="small"
@@ -104,7 +106,7 @@ const PasswordForm = () => {
           <TextField
             required
             fullWidth
-            label="Confirm new password"
+            label={t('settings.confirmNewPassword')}
             name="password_confirm"
             color="secondary"
             size="small"
@@ -113,7 +115,7 @@ const PasswordForm = () => {
             value={passwordConfirm}
             helperText={
               passwordConfirm !== '' && !passwordConfirmMatches
-                ? 'Passwords do not match'
+                ? t('settings.passwordsDoNotMatch')
                 : undefined
             }
             error={passwordConfirm !== '' && !passwordConfirmMatches}
@@ -129,7 +131,7 @@ const PasswordForm = () => {
             variant="contained"
             disabled={disabled}
           >
-            Update password
+            {t('settings.updatePassword')}
           </Button>
         </Grid>
       </Grid>
